@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graphite_client/api.dart';
+import 'package:graphite_client/controller.dart';
 import 'package:graphite_client/types.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'user.freezed.dart';
 part 'user.g.dart';
@@ -25,4 +27,8 @@ class UserClient extends ApiClient<User> {
           resource: 'users',
           fromJson: (json) => User.fromJson(json),
         );
+}
+
+class UserController extends ApiController<User, UserClient> {
+  UserController(ProviderRef ref) : super(ref, api.user);
 }

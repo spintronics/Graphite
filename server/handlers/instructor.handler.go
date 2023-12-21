@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	models "github.com/spintronics/graphite/server/models"
+	"github.com/spintronics/graphite/server/models"
 	services "github.com/spintronics/graphite/server/services"
-	util "github.com/spintronics/graphite/server/util"
+	"github.com/spintronics/graphite/server/util"
 )
 
 func RegisterInstructorHandlers(rg *gin.RouterGroup) {
@@ -13,13 +13,15 @@ func RegisterInstructorHandlers(rg *gin.RouterGroup) {
 	instructor.GET("", func(c *gin.Context) {
 		paging := util.GetPagingConfig(c.Request)
 		instructorService := c.MustGet("instructorService").(*services.InstructorService)
-		instructors := instructorService.GetAll(&paging)
+		var instructors []models.Instructor
+		instructorService.GetAll(&paging, &instructors)
 		c.JSON(200, instructors)
 	})
 
 	instructor.GET("/:id", func(c *gin.Context) {
 		instructorService := c.MustGet("instructorService").(*services.InstructorService)
-		instructor := instructorService.GetByID(c.Param("id"))
+		var instructor models.Instructor
+		instructorService.GetByID(c.Param("id"), &instructor)
 		c.JSON(200, instructor)
 	})
 
@@ -27,7 +29,7 @@ func RegisterInstructorHandlers(rg *gin.RouterGroup) {
 		var instructor models.Instructor
 		c.BindJSON(&instructor)
 		instructorService := c.MustGet("instructorService").(*services.InstructorService)
-		instructor = instructorService.Create(instructor)
+		instructorService.Create(&instructor)
 		c.JSON(200, instructor)
 	})
 
@@ -35,17 +37,17 @@ func RegisterInstructorHandlers(rg *gin.RouterGroup) {
 		var instructor models.Instructor
 		c.BindJSON(&instructor)
 		instructorService := c.MustGet("instructorService").(*services.InstructorService)
-		instructor = instructorService.Update(instructor)
+		instructorService.Update(&instructor)
 		c.JSON(200, instructor)
 	})
 
 	instructor.DELETE("/:id", func(c *gin.Context) {
 		instructorService := c.MustGet("instructorService").(*services.InstructorService)
-		err := instructorService.Delete(c.Param("id"))
+		err := instructorService.Delete(c.Param("id"), &models.Instructor{})
 		if err != nil {
 			c.JSON(400, err)
 		} else {
-			c.JSON(200, nil)
+			c.Status(200)
 		}
 	})
 

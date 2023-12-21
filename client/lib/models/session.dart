@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graphite_client/api.dart';
+import 'package:graphite_client/controller.dart';
 import 'package:graphite_client/models/user.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'session.freezed.dart';
 part 'session.g.dart';
@@ -26,4 +28,8 @@ class SessionClient extends ApiClient<Session> {
           resource: 'sessions',
           fromJson: (json) => Session.fromJson(json),
         );
+}
+
+class SessionController extends ApiController<Session, SessionClient> {
+  SessionController(ProviderRef ref) : super(ref, api.session);
 }

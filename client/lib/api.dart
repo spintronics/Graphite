@@ -113,7 +113,7 @@ abstract class ApiClient<T extends ApiObject> {
 
   // create a common request method so that we can persist headers
 
-  Future<T> findFirst(int id) async {
+  Future<T> findFirst(String id) async {
     final response = await dio.get('$baseUrl/$resource/$id');
     if (response.statusCode == 200) {
       return fromJson(response.data);
@@ -143,25 +143,21 @@ abstract class ApiClient<T extends ApiObject> {
     return fromJson(response.data);
   }
 
-  Future<void> update(T store) async {
+  Future<T> update(T store) async {
     final response = await dio.put(
       '$baseUrl/$resource/${store.id}',
       data: json.encode(store.toJson()),
-      // options: Options(
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Accept': 'application/json',
-      //   },
-      // ),
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to update store');
     }
+
+    return fromJson(response.data);
   }
 
-  Future<void> delete(T store) async {
+  Future<void> delete(String id) async {
     final response = await dio.delete(
-      '$baseUrl/$resource/${store.id}',
+      '$baseUrl/$resource/$id',
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to delete store');

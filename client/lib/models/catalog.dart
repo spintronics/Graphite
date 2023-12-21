@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graphite_client/api.dart';
+import 'package:graphite_client/controller.dart';
 import 'package:graphite_client/types.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'catalog.freezed.dart';
 part 'catalog.g.dart';
@@ -28,4 +30,8 @@ class CatalogClient extends ApiClient<Catalog> {
           resource: 'catalogs',
           fromJson: (json) => Catalog.fromJson(json),
         );
+}
+
+class CatalogController extends ApiController<Catalog, CatalogClient> {
+  CatalogController(ProviderRef ref) : super(ref, api.catalog);
 }

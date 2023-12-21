@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:graphite_client/api.dart';
 import 'package:graphite_client/models/assignment.dart';
 import 'package:graphite_client/models/catalog.dart';
 import 'package:graphite_client/models/course.dart';
@@ -54,6 +55,114 @@ class GraphiteStateNotifier extends Notifier<GraphiteState> {
 
   void reset() {
     state = build();
+  }
+
+  // generic methods for managing api objects in state
+  void addApiObject<T extends ApiObject>(T object) {
+    if (object is Assignment) {
+      state = state.copyWith(
+        assignments: {...state.assignments, object.id!: object},
+      );
+      return;
+    }
+    if (object is Catalog) {
+      state = state.copyWith(
+        catalogs: {...state.catalogs, object.id!: object},
+      );
+      return;
+    }
+    if (object is Course) {
+      state = state.copyWith(
+        courses: {...state.courses, object.id!: object},
+      );
+      return;
+    }
+    if (object is Instructor) {
+      state = state.copyWith(
+        instructors: {...state.instructors, object.id!: object},
+      );
+      return;
+    }
+    if (object is User) {
+      state = state.copyWith(
+        users: {...state.users, object.id!: object},
+      );
+      return;
+    }
+    if (object is Role) {
+      state = state.copyWith(
+        roles: {...state.roles, object.id!: object},
+      );
+      return;
+    }
+  }
+
+  void addApiObjects<T extends ApiObject>(List<T> objects) {
+    for (final object in objects) {
+      addApiObject(object);
+    }
+  }
+
+  void removeApiObject<T extends ApiObject>(T object) {
+    if (object is Assignment) {
+      state = state.copyWith(
+        assignments: {
+          for (final entry in state.assignments.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+
+    if (object is Catalog) {
+      state = state.copyWith(
+        catalogs: {
+          for (final entry in state.catalogs.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+
+    if (object is Course) {
+      state = state.copyWith(
+        courses: {
+          for (final entry in state.courses.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+
+    if (object is Instructor) {
+      state = state.copyWith(
+        instructors: {
+          for (final entry in state.instructors.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+
+    if (object is User) {
+      state = state.copyWith(
+        users: {
+          for (final entry in state.users.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+
+    if (object is Role) {
+      state = state.copyWith(
+        roles: {
+          for (final entry in state.roles.entries)
+            if (entry.key != object.id) entry.key: entry.value
+        },
+      );
+    }
+  }
+
+  void removeApiObjects<T extends ApiObject>(List<T> objects) {
+    for (final object in objects) {
+      removeApiObject(object);
+    }
   }
 
   void update({

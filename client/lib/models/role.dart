@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graphite_client/api.dart';
+import 'package:graphite_client/controller.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'role.freezed.dart';
 part 'role.g.dart';
@@ -22,4 +24,8 @@ class RoleClient extends ApiClient<Role> {
           resource: 'roles',
           fromJson: (json) => Role.fromJson(json),
         );
+}
+
+class RoleController extends ApiController<Role, RoleClient> {
+  RoleController(ProviderRef ref) : super(ref, api.role);
 }

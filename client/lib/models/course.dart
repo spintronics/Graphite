@@ -1,7 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:graphite_client/api.dart';
+import 'package:graphite_client/controller.dart';
 import 'package:graphite_client/models/catalog.dart';
 import 'package:graphite_client/types.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'course.freezed.dart';
 part 'course.g.dart';
@@ -27,4 +29,8 @@ class CourseClient extends ApiClient<Course> {
           resource: 'courses',
           fromJson: (json) => Course.fromJson(json),
         );
+}
+
+class CourseController extends ApiController<Course, CourseClient> {
+  CourseController(ProviderRef ref) : super(ref, api.course);
 }

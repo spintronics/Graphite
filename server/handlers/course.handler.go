@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	models "github.com/spintronics/graphite/server/models"
+	"github.com/spintronics/graphite/server/models"
 	services "github.com/spintronics/graphite/server/services"
-	util "github.com/spintronics/graphite/server/util"
+	"github.com/spintronics/graphite/server/util"
 )
 
 func RegisterCourseHandlers(rg *gin.RouterGroup) {
@@ -13,13 +13,15 @@ func RegisterCourseHandlers(rg *gin.RouterGroup) {
 	course.GET("", func(c *gin.Context) {
 		paging := util.GetPagingConfig(c.Request)
 		courseService := c.MustGet("courseService").(*services.CourseService)
-		courses := courseService.GetAll(&paging)
+		var courses []models.Course
+		courseService.GetAll(&paging, &courses)
 		c.JSON(200, courses)
 	})
 
 	course.GET("/:id", func(c *gin.Context) {
 		courseService := c.MustGet("courseService").(*services.CourseService)
-		course := courseService.GetByID(c.Param("id"))
+		var course models.Course
+		courseService.GetByID(c.Param("id"), &course)
 		c.JSON(200, course)
 	})
 
@@ -27,7 +29,7 @@ func RegisterCourseHandlers(rg *gin.RouterGroup) {
 		var course models.Course
 		c.BindJSON(&course)
 		courseService := c.MustGet("courseService").(*services.CourseService)
-		course = courseService.Create(course)
+		courseService.Create(&course)
 		c.JSON(200, course)
 	})
 
@@ -35,18 +37,17 @@ func RegisterCourseHandlers(rg *gin.RouterGroup) {
 		var course models.Course
 		c.BindJSON(&course)
 		courseService := c.MustGet("courseService").(*services.CourseService)
-		course = courseService.Update(course)
+		courseService.Update(&course)
 		c.JSON(200, course)
 	})
 
 	course.DELETE("/:id", func(c *gin.Context) {
 		courseService := c.MustGet("courseService").(*services.CourseService)
-
-		err := courseService.Delete(c.Param("id"))
+		err := courseService.Delete(c.Param("id"), &models.Course{})
 		if err != nil {
 			c.JSON(400, err)
 		} else {
-			c.JSON(200, nil)
+			c.Status(200)
 		}
 	})
 

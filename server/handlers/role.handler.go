@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	models "github.com/spintronics/graphite/server/models"
+	"github.com/spintronics/graphite/server/models"
 	services "github.com/spintronics/graphite/server/services"
-	util "github.com/spintronics/graphite/server/util"
+	"github.com/spintronics/graphite/server/util"
 )
 
 func RegisterRoleHandlers(rg *gin.RouterGroup) {
@@ -13,13 +13,15 @@ func RegisterRoleHandlers(rg *gin.RouterGroup) {
 	role.GET("", func(c *gin.Context) {
 		paging := util.GetPagingConfig(c.Request)
 		roleService := c.MustGet("roleService").(*services.RoleService)
-		roles := roleService.GetAll(&paging)
+		var roles []models.Role
+		roleService.GetAll(&paging, &roles)
 		c.JSON(200, roles)
 	})
 
 	role.GET("/:id", func(c *gin.Context) {
 		roleService := c.MustGet("roleService").(*services.RoleService)
-		role := roleService.GetByID(c.Param("id"))
+		var role models.Role
+		roleService.GetByID(c.Param("id"), &role)
 		c.JSON(200, role)
 	})
 
@@ -27,7 +29,7 @@ func RegisterRoleHandlers(rg *gin.RouterGroup) {
 		var role models.Role
 		c.BindJSON(&role)
 		roleService := c.MustGet("roleService").(*services.RoleService)
-		role = roleService.Create(role)
+		roleService.Create(&role)
 		c.JSON(200, role)
 	})
 
@@ -35,17 +37,17 @@ func RegisterRoleHandlers(rg *gin.RouterGroup) {
 		var role models.Role
 		c.BindJSON(&role)
 		roleService := c.MustGet("roleService").(*services.RoleService)
-		role = roleService.Update(role)
+		roleService.Update(&role)
 		c.JSON(200, role)
 	})
 
 	role.DELETE("/:id", func(c *gin.Context) {
 		roleService := c.MustGet("roleService").(*services.RoleService)
-		err := roleService.Delete(c.Param("id"))
+		err := roleService.Delete(c.Param("id"), &models.Role{})
 		if err != nil {
 			c.JSON(400, err)
 		} else {
-			c.JSON(200, nil)
+			c.Status(200)
 		}
 	})
 

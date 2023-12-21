@@ -2,50 +2,56 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	models "github.com/spintronics/graphite/server/models"
+	"github.com/spintronics/graphite/server/models"
 	services "github.com/spintronics/graphite/server/services"
-	util "github.com/spintronics/graphite/server/util"
+	"github.com/spintronics/graphite/server/util"
 )
+
+func getService(c *gin.Context) *services.AssignmentService {
+	return c.MustGet("assignmentService").(*services.AssignmentService)
+}
 
 func RegisterAssignmentHandlers(rg *gin.RouterGroup) {
 	assignment := rg.Group("/assignment")
 
 	assignment.GET("", func(c *gin.Context) {
 		paging := util.GetPagingConfig(c.Request)
-		assignmentService := c.MustGet("assignmentService").(*services.AssignmentService)
-		assignments := assignmentService.GetAll(&paging)
+		assignmentService := getService(c)
+		var assignments []models.Assignment
+		assignmentService.GetAll(&paging, &assignments)
 		c.JSON(200, assignments)
 	})
 
 	assignment.GET("/:id", func(c *gin.Context) {
-		assignmentService := c.MustGet("assignmentService").(*services.AssignmentService)
-		assignment := assignmentService.GetByID(c.Param("id"))
+		assignmentService := getService(c)
+		var assignment models.Assignment
+		assignmentService.GetByID(c.Param("id"), &assignment)
 		c.JSON(200, assignment)
 	})
 
 	assignment.POST("", func(c *gin.Context) {
 		var assignment models.Assignment
 		c.BindJSON(&assignment)
-		assignmentService := c.MustGet("assignmentService").(*services.AssignmentService)
-		assignment = assignmentService.Create(assignment)
+		assignmentService := getService(c)
+		assignmentService.Create(&assignment)
 		c.JSON(200, assignment)
 	})
 
 	assignment.PUT("/:id", func(c *gin.Context) {
 		var assignment models.Assignment
 		c.BindJSON(&assignment)
-		assignmentService := c.MustGet("assignmentService").(*services.AssignmentService)
-		assignment = assignmentService.Update(assignment)
+		assignmentService := getService(c)
+		assignmentService.Update(&assignment)
 		c.JSON(200, assignment)
 	})
 
 	assignment.DELETE("/:id", func(c *gin.Context) {
-		assignmentService := c.MustGet("assignmentService").(*services.AssignmentService)
-		err := assignmentService.Delete(c.Param("id"))
+		assignmentService := getService(c)
+		err := assignmentService.Delete(c.Param("id"), &models.Assignment{})
 		if err != nil {
 			c.JSON(400, err)
 		} else {
-			c.JSON(200, nil)
+			c.Status(200)
 		}
 	})
 

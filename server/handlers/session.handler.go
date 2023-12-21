@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	models "github.com/spintronics/graphite/server/models"
+	"github.com/spintronics/graphite/server/models"
 	services "github.com/spintronics/graphite/server/services"
-	util "github.com/spintronics/graphite/server/util"
+	"github.com/spintronics/graphite/server/util"
 )
 
 func RegisterSessionHandlers(rg *gin.RouterGroup) {
@@ -13,13 +13,15 @@ func RegisterSessionHandlers(rg *gin.RouterGroup) {
 	session.GET("", func(c *gin.Context) {
 		paging := util.GetPagingConfig(c.Request)
 		sessionService := c.MustGet("sessionService").(*services.SessionService)
-		sessions := sessionService.GetAll(&paging)
+		var sessions []models.Session
+		sessionService.GetAll(&paging, &sessions)
 		c.JSON(200, sessions)
 	})
 
 	session.GET("/:id", func(c *gin.Context) {
 		sessionService := c.MustGet("sessionService").(*services.SessionService)
-		session := sessionService.GetByID(c.Param("id"))
+		var session models.Session
+		sessionService.GetByID(c.Param("id"), &session)
 		c.JSON(200, session)
 	})
 
@@ -27,7 +29,7 @@ func RegisterSessionHandlers(rg *gin.RouterGroup) {
 		var session models.Session
 		c.BindJSON(&session)
 		sessionService := c.MustGet("sessionService").(*services.SessionService)
-		session = sessionService.Create(session)
+		sessionService.Create(&session)
 		c.JSON(200, session)
 	})
 
@@ -35,17 +37,17 @@ func RegisterSessionHandlers(rg *gin.RouterGroup) {
 		var session models.Session
 		c.BindJSON(&session)
 		sessionService := c.MustGet("sessionService").(*services.SessionService)
-		session = sessionService.Update(session)
+		sessionService.Update(&session)
 		c.JSON(200, session)
 	})
 
 	session.DELETE("/:id", func(c *gin.Context) {
 		sessionService := c.MustGet("sessionService").(*services.SessionService)
-		err := sessionService.Delete(c.Param("id"))
+		err := sessionService.Delete(c.Param("id"), &models.Session{})
 		if err != nil {
 			c.JSON(400, err)
 		} else {
-			c.JSON(200, nil)
+			c.Status(200)
 		}
 	})
 
