@@ -55,4 +55,12 @@ func RegisterAssignmentHandlers(rg *gin.RouterGroup) {
 		}
 	})
 
+	assignment.GET("/count", func(c *gin.Context) {
+		assignmentService := getService(c)
+		var assignment models.Assignment
+		var count int64
+		assignmentService.Count(&assignment, &count)
+		c.JSON(200, count)
+	})
+
 }

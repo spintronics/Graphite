@@ -6,14 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type IDatabaseService[Model any] interface {
-// 	GetAll(paging *types.PagingConfig, model *[]Model)
-// 	GetByID(id string, model *Model)
-// 	Create(model *Model)
-// 	Update(model *Model)
-// 	Delete(id string, model *Model) error
-// }
-
 type DatabaseService[M any] struct {
 	DB    *gorm.DB
 	Model M
@@ -33,6 +25,10 @@ func (service *DatabaseService[M]) Create(model *M) {
 
 func (service *DatabaseService[M]) Update(model *M) {
 	service.DB.Save(model)
+}
+
+func (service *DatabaseService[M]) Count(model *M, count *int64) {
+	service.DB.Model(model).Count(count)
 }
 
 func (service *DatabaseService[M]) Delete(id string, model *M) error {

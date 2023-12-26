@@ -5,16 +5,16 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter_test/flutter_test.dart';
-import 'package:graphite_client/api.dart';
-import 'package:graphite_client/controller.dart';
-import 'package:graphite_client/models/assignment.dart';
-import 'package:graphite_client/models/catalog.dart';
-import 'package:graphite_client/models/course.dart';
-import 'package:graphite_client/models/instructor.dart';
-import 'package:graphite_client/models/user.dart';
-import 'package:graphite_client/state.dart';
+import 'package:graphite_client/src/api.dart';
+import 'package:graphite_client/src/controller.dart';
+import 'package:graphite_client/src/models/assignment.dart';
+import 'package:graphite_client/src/models/catalog.dart';
+import 'package:graphite_client/src/models/course.dart';
+import 'package:graphite_client/src/models/instructor.dart';
+import 'package:graphite_client/src/models/user.dart';
+import 'package:graphite_client/src/state.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:test/test.dart';
 
 void main() {
   final container = ProviderContainer();
@@ -40,7 +40,7 @@ void main() {
     notifier().reset();
   });
 
-  group('crud', () async {
+  group('crud', () {
     test('assignment', () async {
       // create an assignment
       final assignment = Assignment(
@@ -204,59 +204,6 @@ void main() {
 
       expect(state().courses.length, 0);
     });
-
-    // test('instructor', () async {
-    //   // create an instructor
-    //   final instructor = Instructor(
-    //     name: 'Instructor 1',
-    //     description: 'Description 1',
-    //   );
-
-    //   await controller().instructor.create(instructor);
-
-    //   await controller().instructor.findMany();
-
-    //   // verify that the instructor was created
-    //   expect(state().instructors.length, 1);
-    //   expect(
-    //     instructor.toJson()..remove('id'),
-    //     state().instructors.values.first.toJson()..remove('id'),
-    //   );
-
-    //   final apiInstructor = instructor.copyWith(id: state().instructors.keys.first);
-
-    //   await controller().instructor.find(apiInstructor.id!);
-
-    //   expect(state().instructors.length, 1);
-    //   expect(
-    //     apiInstructor.toJson(),
-    //     state().instructors.values.first.toJson(),
-    //   );
-
-    //   // update the instructor
-    //   final updatedInstructor = apiInstructor.copyWith(
-    //     name: 'Instructor 2',
-    //     description: 'Description 2',
-    //   );
-
-    //   await controller().instructor.update(updatedInstructor);
-
-    //   await controller().instructor.find(updatedInstructor.id!);
-
-    //   expect(state().instructors.length, 1);
-    //   expect(
-    //     updatedInstructor.toJson(),
-    //     state().instructors.values.first.toJson(),
-    //   );
-    //   // delete the instructor
-    //   await controller().instructor.delete(updatedInstructor);
-
-    //   notifier().reset();
-
-    //   await controller().instructor.findMany();
-
-    //   expect(state().instructors.length, 0);
-    // });
 
     test('user', () async {
       // create a user

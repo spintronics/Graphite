@@ -2,13 +2,8 @@ package services
 
 import (
 	"github.com/spintronics/graphite/server/models"
-	"github.com/spintronics/graphite/server/types"
 	"gorm.io/gorm"
 )
-
-type ISessionService interface {
-	types.CrudService[models.Session]
-}
 
 type SessionService struct {
 	DatabaseService[models.Session]
